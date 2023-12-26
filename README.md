@@ -44,4 +44,6 @@ CREATE TABLE S3Objects (
 );
 please create these table in your database to perform the operations 
 
+Also i'm adding postman collection for your reference 
+
 
