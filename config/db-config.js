@@ -1,9 +1,9 @@
 // Config for your MS SQL Server
 const config = {
-    user: 'kondesk',
-    password: 'K0nd3sk@3!4',
-    server: '192.168.3.253',
-    database: 'CommCRM',
+    user: 'username',
+    password: 'password',
+    server: 'server',
+    database: 'db',
     options: {
       encrypt: true,
       trustServerCertificate: true
