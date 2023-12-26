@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Buckets</title>
+  <style>
+       .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>List of Buckets</h1>
+  <a href="/create-bucket" type="button">Create Bucket</a>
+  <% if (bucketList.length === 0) { %>
+    <p>No buckets found</p>
+  <% } else { %>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Bucket Name</th>
+          <th>Bucket ID</th>
+          <th>Created At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% bucketList.forEach(bucket => { %>
+          <tr>
+            <td><%= bucket.BucketName %></td>
+            <td><%= bucket.BucketID %></td>
+            <td><%= bucket.CreatedAt %></td>
+            <td>
+              <a href="/list-object?id=<%= bucket.BucketID %>">View Object</a>
+              <button type="button" onclick="openModal('<%= bucket.BucketID %>')">Upload Object</button>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  <% } %>
+
+ 
+  <div id="uploadModal" class="modal">
+    <div class="modal-content">
+      <span onclick="closeModal()" style="float: right; cursor: pointer;">&times;</span>
+      <h2>Upload Object</h2>
+      <input type="file" id="fileInput">
+      <input type="hidden" id="bucketIdField">
+      <button onclick="uploadFile()">Upload</button>
+    </div>
+  </div>
+
+  <script>
+    function openModal(bucketID) {
+      const modal = document.getElementById('uploadModal');
+      modal.style.display = 'block';
+      document.getElementById('bucketIdField').value = bucketID;
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('uploadModal');
+      modal.style.display = 'none';
+    }
+
+    function uploadFile() {
+      const fileInput = document.getElementById('fileInput');
+      console.log(fileInput)
+      const file = fileInput.files[0];
+      console.log(file)
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const bucketID = document.getElementById('bucketIdField').value;
+      
+        formData.append('BucketID', bucketID);
+        formData.append('ObjectName', file.name);
+
+        fetch('http://localhost:8080/put-object', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => {
+          if (response.ok) {
+            alert('File uploaded successfully');
+            closeModal();
+          } else {
+           alert('Failed to upload the file');
+          }
+        })
+        .catch(error => {
+         alert('Error:', error);
+        });
+      } else {
+        alert('No file selected');
+      }
+    }
+  </script>
+</body>
+</html>

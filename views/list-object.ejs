@@ -1,0 +1,79 @@
+<!-- list-bucket.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>View Object</title>
+</head>
+<body>
+  <h1>View Object Details</h1>
+  <% if (object.length === 0) { %>
+    <p>No data found</p>
+  <% } else { %>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>Uploaded At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% object.forEach(object => { %>
+          <tr data-id="<%= object.ObjectID %>">
+            <td><%= object.ObjectName %></td>
+            <td><%= object.UploadedAt %></td>
+            <td>
+              <button type="button" onclick="downloadFile('<%= object.ObjectID %>')">Download</button>
+              <button type="button" onclick="deleteFile('<%= object.ObjectID %>')">Delete</button>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  <% } %>
+</body>
+</html>
+
+<script>
+  async function downloadFile(objectId) {
+    try {
+      const response = await fetch(`/get-object?id=${objectId}`);
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'file'; 
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      } else {
+        console.error('Failed to download the file');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  async function deleteFile(id) {
+    try {
+      const response = await fetch(`/delete-object?id=${id}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        const deletedRow = document.querySelector(`[data-id='${id}']`);
+        if (deletedRow) {
+          deletedRow.remove();
+          alert('File Deleted Successfully!')
+        }
+      } else {
+        console.error('Failed to delete the file');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+</script>
