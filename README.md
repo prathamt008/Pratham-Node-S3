@@ -14,7 +14,9 @@ PLEASE Provide the following details for database connection
     database: 'db'
 
 * I have used Sql as database
-* further you have to create tables in your database i'm providing the query for the same 
+* further you have to create tables in your database i'm providing the query for the same
+
+* 
 -- Users Table
 CREATE TABLE S3Users (
     UserID INT IDENTITY(1,1) PRIMARY KEY,
